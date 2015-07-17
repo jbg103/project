@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 변경 사항: resultMap 적용 -->
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.bitacademy.java67.dao.VoteDao">
+  
+  <resultMap type="VoteVo" id="VoteVoMap">
+    <id     column="VTno"      		property="no" />
+    <result column="userID"         property="userID" />
+    <result column="category"       property="category" />
+    <result column="title"    		property="title" />
+    <result column="content"  		property="content" />
+    <result column="cre_date" 		property="createDate" />
+    <result column="views"    		property="views" /> 
+    <result column="photo1"    		property="photoOne" />
+    <result column="photo2"    		property="photoTwo" />
+    <result column="photoTag1"      property="photoTag1" />
+    <result column="photoTag2"      property="photoTag2" />
+    <result column="voteCount1"     property="voteCount1" />
+    <result column="voteCount2"     property="voteCount2" />
+  </resultMap>
+  
+  <!-- useGeneratedKeys 속성의 값을 true로 설정하면,
+    INSERT 할 때 자동 생성된 bno 값을 파라미터 객체에 꺼꾸로 설정해 준다.
+   -->
+  <insert id="insert" parameterType="VoteVo"
+        keyColumn="VTno" keyProperty="no" useGeneratedKeys="true">
+      INSERT INTO voteTable (title,photo1,photo2,photoTag1,photoTag2,voteCount1,voteCount2,content,userID,views,category,cre_date) 
+      VALUES (#{title},#{photoOne},#{photoTwo},#{photoTag1},#{photoTag2},#{voteCount1},#{voteCount2},#{content},#{userID},#{views},#{category},now())
+  </insert>
+  
+ 
+  
+  
+   <update id="update" parameterType="VoteVo">
+      UPDATE voteTable SET 
+        title=#{title} 
+        ,content=#{content}
+        ,photo1=#{photoOne}
+        ,photo2=#{photoTwo}
+        ,photoTag1=#{photoTag1}
+        ,photoTag2=#{photoTag2}
+      WHERE Vtno=#{no}
+  </update>
+  
+  <insert id="userIDcheck" parameterType="VoteVo">
+      INSERT INTO id (id) VALUES (#{userID})
+  </insert>
+  
+  <select id="selectOne" parameterType="int" resultMap="VoteVoMap">
+      SELECT * from voteTable
+      WHERE Vtno=#{no}
+  </select>
+  
+  <select id="selectEnd" parameterType="int" resultMap="VoteVoMap">
+      
+  </select>
+  
+  <delete id="delete" parameterType="int">
+      DELETE FROM voteTable WHERE Vtno=#{no}
+  </delete>
+  
+ <select id="getMyVoteEndTable" parameterType="map" resultMap="VoteVoMap">
+      select * from voteTable where voteExit='종료됨' and userID = #{userID} Order By VTno desc LIMIT #{startIndex}, #{pageSize} 
+  </select>
+  
+  <select id="getMyVoteIngTable" parameterType="map" resultMap="VoteVoMap">
+     select * from voteTable where voteExit='진행중'and userID = #{userID} Order By VTno desc LIMIT #{startIndex}, #{pageSize} 
+  </select>
+  
+  
+   <select id="getVoteTable" parameterType="map" resultMap="VoteVoMap">
+      SELECT * FROM voteTable Order By VTno desc
+      LIMIT #{startIndex}, #{pageSize} 
+  </select>
+  
+  
+   <select id="getMyVoteTable" parameterType="map" resultMap="VoteVoMap">
+      SELECT * FROM voteTable WHERE userID = #{userID} Order By VTno desc
+      LIMIT #{startIndex}, #{pageSize} 
+  </select>
+  
+  
+   <select id="getHotVoteTable" parameterType="map" resultMap="VoteVoMap">
+         SELECT * FROM voteTable where Vtno = 110 Order By voteCount1 desc
+      
+  </select>
+   
+   <update id="voteCount1" parameterType='int'>
+      UPDATE voteTable set voteCount1= voteCount1 +1 where Vtno= #{Vtno}
+  </update>
+   <update id="voteCount2" parameterType='int' >
+      UPDATE voteTable set voteCount2= voteCount2 +1 where Vtno= #{Vtno}
+  </update>
+  
+  <update id="exitVoteUpdate" parameterType="int">
+	UPDATE voteTable SET voteExit ='종료됨' where Vtno= #{Vtno}
+</update>
+</mapper>
+
+
+
+
+
+
+
+
+

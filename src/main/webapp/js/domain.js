@@ -1,0 +1,1 @@
+var domain = "http://192.168.103.79:9999/voteProject"
